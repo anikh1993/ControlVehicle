@@ -45,7 +45,7 @@ struct HomeView: View {
                             title: Text("Are you sure?"),
                             message: Text("Please, confirm that you want to lock the doors of \(vehicle.name)."),
                             primaryButton: .default(Text("Yes, lock"), action: {
-                                homeViewModel.lockVehicle()
+                                homeViewModel.lockVehicle.send(true)
                             }),
                             secondaryButton: .default(Text("Cancel")))
                     })

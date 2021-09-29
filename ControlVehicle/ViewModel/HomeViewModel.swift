@@ -15,6 +15,7 @@ class HomeViewModel: ObservableObject {
     
     var vehicle = CurrentValueSubject<Vehicle?, Never>(nil)
     var showAlert = PassthroughSubject<Bool, Never>()
+    var lockVehicle = PassthroughSubject<Bool, Never>()
     private var subscribers = Set<AnyCancellable>()
     
     init() {
@@ -31,18 +32,18 @@ class HomeViewModel: ObservableObject {
         showAlert.sink {[unowned self] show in
             self.showingAlert = show
         }.store(in: &subscribers)
-    }
-    
-    func lockVehicle() {
-        loading = true
-        let date = Date()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            self.vehicle.value?.isLocked = true
-            self.vehicle.value?.updatedDate = date
-            self.loading = false
-        }
+        lockVehicle.sink {[unowned self] lock in
+            if lock {
+                loading = true
+                let date = Date()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.vehicle.value?.isLocked = true
+                    self.vehicle.value?.updatedDate = date
+                    self.loading = false
+                }
+            }
+        }.store(in: &subscribers)
     }
-    
-    func unlockVehicle() { }
 }
